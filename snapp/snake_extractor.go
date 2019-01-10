@@ -49,19 +49,19 @@ func loadCSV(csvLoc string) () {
 		if len(numSynonymsStr) > 0 {
 			numSynonyms, err := strconv.Atoi(numSynonymsStr)
 			handleErr(err)
-			synonyms := make(map[int]string)
+			synonyms := make([]string, numSynonyms)
 			if numSynonyms > 0 {
+				synLength := 0
 				for i := 12; i < 12+numSynonyms; i++ {
 					syn := strings.TrimSpace(line[i])
 
-					synLength := 0
 					if strings.Contains(syn, "?") == false  && len(syn) != 0 && strings.Compare(syn, binomial) != 0 && strings.Compare(syn, "NA") != 0 {
 						fmt.Println(len(syn), syn)
-						_  = append(synonyms[synLength], syn)
-						synonyms.
+						synonyms[synLength] = syn
+						synLength++
 					}
 				}
-				a := SnakeSynonyms{Name: binomial, Synonyms: synonyms}
+				a := SnakeSynonyms{Name:binomial, Synonyms:synonyms}
 				s := Snake{Binomial: binomial, Family: family, Genus: genus, AllNames: a}
 				snakes[index] = s
 			}
