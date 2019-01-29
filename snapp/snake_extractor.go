@@ -27,6 +27,15 @@ func handleErr(err error) {
 	}
 }
 
+func stringExists(needle string, haystack []string) bool {
+	for _, h := range haystack {
+		if strings.ToLower(needle) == strings.ToLower(h) {
+			return true
+		}
+	}
+	return false
+}
+
 func loadCSV(csvLoc string) {
 	f, err := os.Open(csvLoc)
 	handleErr(err)
@@ -37,6 +46,7 @@ func loadCSV(csvLoc string) {
 	handleErr(err)
 	fmt.Println(len(lines))
 	snakes := make([]Snake, len(lines))
+	snakeLength := 0
 	for index, line := range lines {
 		if len(strings.TrimSpace(line[3])) == 0 {
 			continue
@@ -53,11 +63,10 @@ func loadCSV(csvLoc string) {
 				synLength := 0
 				for i := 12; i < 12+numSynonyms; i++ {
 					syn := strings.TrimSpace(line[i])
-
-					if strings.Contains(syn, "?") == false && len(syn) != 0 && strings.Compare(syn, binomial) != 0 && strings.Compare(syn, "NA") != 0 {
+					// TODO ignore existing synonyms
+					if strings.Contains(syn, "?") == false && len(syn) != 0 && strings.Compare(syn, binomial) != 0 && strings.Compare(syn, "NA") != 0 && !stringExists(syn, synonyms) {
 						fmt.Println(len(syn), syn)
 						syn = strings.Replace(syn, "(", "", -1)
-						syn = strings.Replace(syn, "\ufffd", "ü", -1)
 						synonyms[synLength] = syn
 						synLength++
 					}
@@ -66,10 +75,11 @@ func loadCSV(csvLoc string) {
 				a := SnakeSynonyms{Name: binomial, Synonyms: synonyms}
 				s := Snake{Family: family, Genus: genus, AllNames: a}
 				snakes[index] = s
+				snakeLength++
 			}
 		}
-		//fmt.Println(binomial, family, genus, numSynonyms)
 	}
+	snakes = append([]Snake(nil), snakes[:snakeLength]...)
 	snakeJSON, _ := json.MarshalIndent(snakes, "", " ")
 	err = ioutil.WriteFile("./data/snakes.json", snakeJSON, 0644)
 	handleErr(err)
