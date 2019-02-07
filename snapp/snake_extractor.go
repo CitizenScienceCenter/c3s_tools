@@ -11,11 +11,14 @@ import (
 	"strings"
 )
 
+// Snake structure to hold the contents describing the animal
 type Snake struct {
 	Family   string        `json:"family"` //index 2
 	Genus    string        `json:"genus"`  //index 1
 	AllNames SnakeSynonyms `json:"allNames"`
 }
+
+// SnakeSynonyms structure to hold the original name and associated (unique) synonyms
 type SnakeSynonyms struct {
 	Name     string   `json:"binomial"`
 	Synonyms []string `json:"synonyms"` //12 > ? (must test for  number of columns  with text(or use no_syn at index 9)
