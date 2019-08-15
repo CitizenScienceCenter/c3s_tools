@@ -1,0 +1,12 @@
+---
+- hosts: local
+  vars:
+    api_server: https://api.citizenscience.ch/api/v2
+  remote_user: encima
+  tasks:
+    - name: find related files
+      - action: go run video_sorter.go
+    - name: convert all files to mp4 and extract screenshots
+      - action: go run video_converter.go
+    - name: insert tasks into database and create media
+      - action: python3 task_ingestor.py
